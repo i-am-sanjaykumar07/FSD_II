@@ -1,10 +1,10 @@
 package com.fsd.exp6.controller;
 
 import com.fsd.exp6.entity.Category;
-import com.fsd.exp6.repository.CategoryRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -12,19 +12,16 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:5173")
 public class CategoryController {
 
-    private final CategoryRepository categoryRepository;
-
-    public CategoryController(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
+    private final List<Category> categories = new ArrayList<>();
 
     @GetMapping
     public List<Category> getCategories() {
-        return categoryRepository.findAll();
+        return categories;
     }
     
     @PostMapping
     public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-        return ResponseEntity.ok(categoryRepository.save(category));
+        categories.add(category);
+        return ResponseEntity.ok(category);
     }
 }

@@ -1,13 +1,17 @@
 package com.fsd.exp6.controller;
 
-import com.fsd.exp6.entity.Role;
-import com.fsd.exp6.entity.User;
-import com.fsd.exp6.repository.RoleRepository;
-import com.fsd.exp6.repository.UserRepository;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.fsd.exp6.entity.User;
+import com.fsd.exp6.repository.UserRepository;
 
 @RestController
 @RequestMapping("/api/users")
@@ -15,11 +19,9 @@ import java.util.List;
 public class UserController {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
 
-    public UserController(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
     }
 
     @GetMapping
@@ -30,20 +32,5 @@ public class UserController {
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
         return ResponseEntity.ok(userRepository.save(user));
-    }
-    
-    @GetMapping("/roles")
-    public List<Role> getRoles() {
-        return roleRepository.findAll();
-    }
-    
-    @PostMapping("/{userId}/roles/{roleId}")
-    public ResponseEntity<?> assignRole(@PathVariable Long userId, @PathVariable Long roleId) {
-        return userRepository.findById(userId).flatMap(user -> 
-            roleRepository.findById(roleId).map(role -> {
-                user.getRoles().add(role);
-                return ResponseEntity.ok(userRepository.save(user));
-            })
-        ).orElse(ResponseEntity.badRequest().build());
     }
 }

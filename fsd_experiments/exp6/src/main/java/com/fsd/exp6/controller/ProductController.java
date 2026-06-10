@@ -1,12 +1,18 @@
 package com.fsd.exp6.controller;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.fsd.exp6.entity.Product;
 import com.fsd.exp6.repository.ProductRepository;
-import com.fsd.exp6.repository.CategoryRepository;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
@@ -14,11 +20,9 @@ import java.util.List;
 public class ProductController {
 
     private final ProductRepository productRepository;
-    private final CategoryRepository categoryRepository;
 
-    public ProductController(ProductRepository productRepository, CategoryRepository categoryRepository) {
+    public ProductController(ProductRepository productRepository) {
         this.productRepository = productRepository;
-        this.categoryRepository = categoryRepository;
     }
 
     @GetMapping
@@ -28,9 +32,6 @@ public class ProductController {
     
     @PostMapping("/category/{categoryId}")
     public ResponseEntity<?> createProduct(@PathVariable Long categoryId, @RequestBody Product product) {
-        return categoryRepository.findById(categoryId).map(category -> {
-            product.setCategory(category);
-            return ResponseEntity.ok(productRepository.save(product));
-        }).orElse(ResponseEntity.badRequest().build());
+        return ResponseEntity.ok(productRepository.save(product));
     }
 }
